@@ -1,0 +1,17 @@
+.videos {
+  display: flex;
+}
+
+.video-wrapper {
+  margin: 1em;
+  width: 30vw;
+}
+
+.video-player {
+  width: 100%;
+  background: #ccc;
+}
+
+.user-list {
+  max-width: 30vw;
+}
