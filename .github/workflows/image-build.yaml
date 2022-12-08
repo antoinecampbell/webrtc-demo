@@ -1,0 +1,16 @@
+name: image-build
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.5.1
+        with:
+          node-version: 16
+          cache: yarn
+      - name: Install dependencies
+        run: yarn install
+      - name: Build Docker Image
+        run: docker build . -t "ghcr.io/$GITHUB_REPOSITORY_OWNER/webrtc"

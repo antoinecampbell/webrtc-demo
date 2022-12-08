@@ -9,5 +9,3 @@ COPY public/ /app/public
 RUN yarn
 
 CMD node server.js
-#Push to microk8s registry
-#docker buildx build --platform linux/amd64,linux/arm64 --push -t home-server:32000/local/web-rtc-demo .

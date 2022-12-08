@@ -31,3 +31,9 @@ yarn run start
 5. Finally, the original peer can add the candidate to the session
    - Video + audio = janky version of Google Meet
    - Also, you can join from two different tabs
+
+## Docker image build on M1/M2 Mac
+```shell
+# Push to microk8s registry
+docker buildx build --platform linux/amd64,linux/arm64 --push -t home-server:32000/local/web-rtc-demo .
+```
