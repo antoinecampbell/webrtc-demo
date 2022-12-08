@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Set container image env
-        run: export CONTAINER_IMAGE="ghcr.io/$GITHUB_REPOSITORY_OWNER/webrtc"
+        run: echo "CONTAINER_IMAGE=ghcr.io/$GITHUB_REPOSITORY_OWNER/webrtc" >> $CONTAINER_IMAGE
       - name: Build Docker Image
         run: docker build . -t $CONTAINER_IMAGE
       - name: Push Docker Image
