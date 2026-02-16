@@ -1,5 +1,25 @@
 const express = require('express');
 const expressWs = require("express-ws");
+const pino = require('pino');
+
+// Initialize logger - pretty for local dev, JSON for production
+const useJsonLogs = process.env.NODE_ENV !== undefined;
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  formatters: {
+    level: (label) => {
+      return { level: label };
+    }
+  },
+  transport: !useJsonLogs ? {
+    target: 'pino-pretty',
+    options: {
+      colorize: true,
+      translateTime: 'HH:MM:ss',
+      ignore: 'pid,hostname'
+    }
+  } : undefined
+});
 
 // Constants and variables
 const port = process.env.PORT || 3000;
@@ -23,15 +43,15 @@ app.get('/broadcast', (req, res) => {
 
 // Websocket routes
 app.ws('/ws', (ws, req) => {
-  console.log('Connection established');
   const uid = req.query.uid;
+  logger.info({ uid, event: 'connection_established' }, 'Connection established');
   connections[uid] = {uid, ws, candidates: []};
   ws.send(JSON.stringify({action: 'CONNECTED'}));
   broadcastUserList();
 
   ws.on('message', message => {
-    console.log('Incoming message', message);
     const data = JSON.parse(message);
+    logger.info({ uid, action: data.action, event: 'incoming_message' }, 'Incoming message');
     switch (data.action) {
       case 'OFFER':
         // TODO handle peer specific offer
@@ -51,7 +71,7 @@ app.ws('/ws', (ws, req) => {
   });
 
   ws.on('close', () => {
-    console.log(`Connection closed for uid: ${uid}`);
+    logger.info({ uid, event: 'connection_closed' }, 'Connection closed');
     delete connections[uid];
     broadcastUserList();
   });
@@ -66,12 +86,12 @@ const broadcastUserList = () => {
       candidates: connections[key].candidates
     }
   });
-  console.log(users);
+  logger.debug({ userCount: users.length, event: 'broadcast_user_list' }, 'Broadcasting user list');
   users.forEach(user => {
     connections[user.uid].ws.send(JSON.stringify({action: 'USER_LIST', users}));
   });
 };
 
 app.listen(port, () => {
-  console.log(`Listening on port: ${port}`)
+  logger.info({ port, event: 'server_started' }, 'Server started');
 });
