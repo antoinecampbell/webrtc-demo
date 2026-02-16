@@ -1,3 +1,0 @@
-# Needed to push image with docker buildx to microk8s registry
-[registry."home-server:32000"]
-  http = true

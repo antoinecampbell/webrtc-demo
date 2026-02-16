@@ -34,6 +34,6 @@ yarn run start
 
 ## Docker image build on M1/M2 Mac
 ```shell
-# Push to microk8s registry
-docker buildx build --platform linux/amd64,linux/arm64 --push -t home-server:32000/local/web-rtc-demo .
+# Build images for both AMD64 and ARM64 architectures
+docker buildx build --platform linux/amd64,linux/arm64 .
 ```
